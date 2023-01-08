@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Card, Alert } from "react-bootstrap";
+import { Card, Container } from "react-bootstrap";
 
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 
 const { REACT_APP_API } = process.env;
 
-
 const Cards = ({ city }) => {
   city = city.toUpperCase();
+  const [place, setPlace] = useState(city);
   const [weather, setWeather] = useState({
     temp: "",
     wind: "",
@@ -37,7 +37,7 @@ const Cards = ({ city }) => {
       temp = temp.toFixed(2);
 
       let desc = description.toUpperCase();
-
+      setPlace(city);
       setWeather({
         temp: temp,
         wind: speed,
@@ -47,7 +47,16 @@ const Cards = ({ city }) => {
         imageUrl: `http://openweathermap.org/img/w/${icon}.png`,
       });
     } catch (err) {
-      return (<Alert variant="warning">City Not Found</Alert>)
+      return toast("City Data Not Present!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
@@ -56,54 +65,34 @@ const Cards = ({ city }) => {
   }, [city]);
 
   return (
-    <div className="container text-center">
-      <div
-        className="d-flex justify-content-between"
-        style={{ color: "#000000", marginTop: "2rem" }}
-      >
-        <div>
-          <div>
-            <h1>{city}</h1>
+    <Card bg="dark" text="white" style={{ width: "100%", height: "35rem" }}>
+      <Card.Body>
+        <div className="d-flex justify-content-around">
+          <div className="d-flex flex-column display-1" style={{textAlign: "center"}}>
+            <div style={{textAlign: "center"}}> {place} </div>
+            <div>{weather.temp}&deg;C </div>
           </div>
-          <div style={{ textSize: "50px" }}>
-            <h1>{weather.temp}&deg;C</h1>
+          <div className="d-flex flex-column display-6">
+            <img src={weather.imageUrl} alt="weather icon" style={{width: "100px",}} />
+            <div style={{textAlign: "center"}}>{weather.desc}</div>
           </div>
         </div>
-        <div>
-          <img src={weather.imageUrl} alt="weather icon" />
-          <h2 style={{ color: "#000000" }}>{weather.desc}</h2>
-        </div>
-      </div>
-      <div
-        className="d-flex border-0 sm:flex-wrap justify-content-around"
-        style={{ marginTop: "20%", color: "#000000" }}
-      >
-        <Card
-          className="border-0"
-          style={{ width: "18rem", background: "rgba(255,255,255, 0.2)" }}
-        >
-          <Card.Body>
+        <div className="d-flex justify-content-around" style={{marginTop: "10%"}}>
+          <Card style={{background: "rgba(255,255,255, 0.2)", width: "30%", textAlign: "center", padding: "1rem"}}>
             <Card.Title>FEELS LIKE</Card.Title>
-            <Card.Text>{weather.feelsLike}&deg;C</Card.Text>
-          </Card.Body>
-        </Card>
-        <Card className="border-0" style={{ width: "18rem" }}>
-          <Card.Body>
+            <Card.Title>{weather.feelsLike}&deg;C</Card.Title>
+          </Card>
+          <Card style={{background: "rgba(255,255,255, 0.2)", width: "30%", textAlign: "center", padding: "1rem"}}>
             <Card.Title>WIND</Card.Title>
-            <Card.Text>{weather.wind} MPH</Card.Text>
-          </Card.Body>
-        </Card>
-        <Card
-          className="border-0"
-          style={{ width: "18rem", background: "rgba(255,255,255, 0.2)" }}
-        >
-          <Card.Body>
+            <Card.Title>{weather.wind}MPH</Card.Title>
+          </Card>
+          <Card style={{background: "rgba(255,255,255, 0.2)", width: "30%", textAlign: "center", padding: "1rem"}}>
             <Card.Title>HUMIDITY</Card.Title>
-            <Card.Text>{weather.humidity}%</Card.Text>
-          </Card.Body>
-        </Card>
-      </div>
-    </div>
+            <Card.Title>{weather.humidity}%</Card.Title>
+          </Card>
+        </div>
+      </Card.Body>
+    </Card>
   );
 };
 
